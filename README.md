@@ -18,7 +18,7 @@ The solver is fully interactive. Simply run it and go!
 
 You'll be presented with a word, which you should enter into the first row of the Wordle UI.
 
-```bash
+```
    Iteration  1
 Search Space  176070
        Board  [?] [?] [?] [?] [?]
@@ -26,7 +26,7 @@ Search Space  176070
 ```
 You'll then be asked to tell the solver which color each cell in that row turns (`E` for empty, `Y` for yellow, or `G` for green). The default is `E`.
 
-```bash
+```
 Enter the word, and let me know the color of each block!
 
 1. W [e, y, g] (e)
