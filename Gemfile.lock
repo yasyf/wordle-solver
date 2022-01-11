@@ -30,6 +30,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   rubocop
+  ruby-progressbar
   thor
 
 BUNDLED WITH

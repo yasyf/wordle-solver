@@ -7,6 +7,8 @@ class WordList
   DEFAULT_FILE = 'master/results/enwiki-20190320-words-frequency.txt'
   WORD_LENGTH  = 5
 
+  class UnsolvablePuzzleError < Thor::Error; end
+
   attr_reader :words
 
   def initialize(repo = DEFAULT_REPO, file = DEFAULT_FILE)
@@ -23,7 +25,9 @@ class WordList
   end
 
   def solved?
-    words.length <= 1
+    raise UnsolvablePuzzleError if words.empty?
+
+    words.length == 1
   end
 
   private

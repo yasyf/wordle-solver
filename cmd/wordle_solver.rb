@@ -1,33 +1,70 @@
 # frozen_string_literal: true
 
 require 'thor'
+require 'ruby-progressbar'
 require 'io/console'
 require_relative '../util/solver'
 
 class WordleSolver < Thor
   RESPONSES = {
-    'e' => nil,
-    'y' => :contains,
-    'g' => :constraint
+    'E' => nil,
+    'Y' => :contains,
+    'G' => :constraint
   }.freeze
 
   COLORS = {
-    'e' => :bold,
-    'y' => :yellow,
-    'g' => :green
+    'E' => :bold,
+    'Y' => :yellow,
+    'G' => :green
   }.freeze
+
+  class EarlyExit < Thor::Error; end
+
+  def self.exit_on_failure?
+    false
+  end
 
   desc 'solve', 'Interactively solves a wordle puzzle'
   default_task :solve
 
   def solve
+    solve!
+  rescue SystemExit, Interrupt
+    raise EarlyExit
+  end
+
+  private
+
+  def solve!
+    puts "Let's do this! Just a little bit of setup first."
+    load!
+
     solver.solve(&method(:handle_word))
     reset
+
     say
     say 'Congrats!'
   end
 
-  private
+  def load!
+    progressbar = ProgressBar.create(
+      title: set_color('Downloading wordlist', :bold),
+      unknown_progress_animation_steps: ['.    ', '..   ', '...  ', '.... ', '.....'],
+      total: nil,
+      format: '%t%B',
+      length: 25,
+    )
+    Thread.new do
+      until progressbar.finished?
+        progressbar.increment
+        sleep 0.1
+      end
+    end
+
+    solver.init!
+
+    progressbar.finish
+  end
 
   def reset
     $stdout.clear_screen
@@ -43,7 +80,9 @@ class WordleSolver < Thor
     say_status 'Word', word
 
     say
-    say 'Enter the word, and let me know the color of each block!'
+    say 'Enter the word above into Wordle, and let me know the color of each cell!'
+    say 'E = empty, Y = yellow, G = green'
+    say
 
     word.split('').each_with_index.map do |chr, i|
       defaults[i] = ask(
@@ -72,6 +111,6 @@ class WordleSolver < Thor
   end
 
   def defaults
-    @defaults ||= Hash.new('e')
+    @defaults ||= Hash.new('E')
   end
 end

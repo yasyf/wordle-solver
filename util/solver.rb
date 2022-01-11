@@ -27,7 +27,11 @@ class Solver
   end
 
   def stats
-    {total: list.words.length, iterations: @iterations}
+    { total: list.words.length, iterations: @iterations }
+  end
+
+  def init!
+    list
   end
 
   private
