@@ -6,6 +6,8 @@ require_relative './word_list'
 class Solver
   attr_reader :constraints
 
+  SEED = 'adieu'
+
   def initialize
     @contains = {}
     @constraints = Array.new(WordList::WORD_LENGTH)
@@ -14,9 +16,9 @@ class Solver
 
   def solve
     until list.solved?
+      word = guess
       @iterations += 1
-      word = list.next
-      yield(list.next.upcase).each_with_index do |res, i|
+      yield(word.upcase).each_with_index do |res, i|
         case res
         when :contains then contains! word[i]
         when :constraint then constraint! i, word[i]
@@ -49,6 +51,10 @@ class Solver
   def constraint!(pos, chr)
     @constraints[pos] = chr
     list.filter! { |word| word[pos] == chr }
+  end
+
+  def guess
+    @iterations.zero? ? SEED : list.next
   end
 
   def list

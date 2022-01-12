@@ -85,13 +85,15 @@ class WordleSolver < Thor
     say
 
     word.split('').each_with_index.map do |chr, i|
-      defaults[i] = ask(
+      chr = ask(
         "#{i + 1}. #{set_color(chr, COLORS[defaults[i]])}",
         limited_to: RESPONSES.keys,
         case_insensitive: true,
         default: defaults[i],
       )
-      RESPONSES[defaults[i]]
+      RESPONSES[chr].tap do |res|
+        defaults[i] = chr if res == :constraint
+      end
     end
   end
 
