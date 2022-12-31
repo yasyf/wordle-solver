@@ -4,7 +4,7 @@ require 'open-uri'
 
 class WordList
   DEFAULT_REPO = 'IlyaSemenov/wikipedia-word-frequency'
-  DEFAULT_FILE = 'master/results/enwiki-20190320-words-frequency.txt'
+  DEFAULT_FILE = 'master/results/enwiki-2022-08-29.txt'
   WORD_LENGTH  = 5
 
   class UnsolvablePuzzleError < Thor::Error; end
@@ -35,7 +35,7 @@ class WordList
   def fetch_words!
     @words ||= URI.open(@url).read.split("\n").each_with_object({}) do |line, words|
       word, count = line.split(' ')
-      words[word] = count.to_i if word.length == WORD_LENGTH
+      words[word] = count.to_i if /^[A-Za-z]{#{WORD_LENGTH}}$/ =~ word
     end
   end
 end

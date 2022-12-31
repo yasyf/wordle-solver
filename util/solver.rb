@@ -44,6 +44,8 @@ class Solver
   end
 
   def excludes!(chr)
+    return if @contains[chr]
+
     @contains[chr] = false
     list.filter! { |word| !word.include?(chr) }
   end
